@@ -111,8 +111,7 @@ class CvCamera(BaseCamera):
         LOGGER.debug("Processing capture with opencv")
         
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        imagesave = Image.fromarray(frame)
-        imagesave.save("/home/murthag/Pictures/save.png", format='PNG')
+        
         # Crop to keep aspect ratio of the resolution
         height, width = image.shape[:2]
         cropped = sizing.new_size_by_croping_ratio((width, height), self.resolution)
@@ -141,6 +140,9 @@ class CvCamera(BaseCamera):
 
         LOGGER.debug("Taking capture with opencv at resolution %s", self.resolution)
         ret, image = self._cam.read()
+        imagesave = Image.fromarray(image)
+        imagesave.save("/home/murthag/Pictures/capture.png", format='PNG')
+        
         if not ret:
             raise IOError("Can not capture frame")
         image = self._rotate_image(image, self.capture_rotation)
