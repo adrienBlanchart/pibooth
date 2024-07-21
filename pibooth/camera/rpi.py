@@ -116,6 +116,7 @@ class RpiCamera(BaseCamera):
         """Capture a new picture in a file.
         """
         try:
+            LOGGER.debug("Taking capture with rpi camera")
             if self.capture_iso != self.preview_iso:
                 self._cam.iso = self.capture_iso
             if self.capture_rotation != self.preview_rotation:

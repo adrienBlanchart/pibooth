@@ -136,7 +136,7 @@ class CvCamera(BaseCamera):
         if self.capture_iso != self.preview_iso:
             self._cam.set(cv2.CAP_PROP_ISO_SPEED, self.capture_iso)
 
-        LOGGER.debug("Taking capture at resolution %s", self.resolution)
+        LOGGER.debug("Taking capture with opencv at resolution %s", self.resolution)
         ret, image = self._cam.read()
         if not ret:
             raise IOError("Can not capture frame")
