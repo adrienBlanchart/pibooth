@@ -108,7 +108,8 @@ class CvCamera(BaseCamera):
         :type capture_data: tuple
         """
         frame, effect = capture_data
-
+        LOGGER.debug("Processing capture with opencv")
+        return Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         # Crop to keep aspect ratio of the resolution
         height, width = image.shape[:2]
@@ -134,7 +135,7 @@ class CvCamera(BaseCamera):
         self._cam.set(cv2.CAP_PROP_FRAME_HEIGHT, self.resolution[1])
 
         if self.capture_iso != self.preview_iso:
-            self._cam.set(cv2.CAP_PROP_ISO_SPEED, self.capture_iso)
+            self._cam_cam.set(cv2.CAP_PROP_ISO_SPEED, self.capture_iso)
 
         LOGGER.debug("Taking capture with opencv at resolution %s", self.resolution)
         ret, image = self._cam.read()
