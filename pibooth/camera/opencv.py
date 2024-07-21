@@ -109,8 +109,11 @@ class CvCamera(BaseCamera):
         """
         frame, effect = capture_data
         LOGGER.debug("Processing capture with opencv")
-        return Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        imagesave = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        if save_path:
+            imagesave.save("/home/murthag/Pictures/save.png", format='PNG')
         # Crop to keep aspect ratio of the resolution
         height, width = image.shape[:2]
         cropped = sizing.new_size_by_croping_ratio((width, height), self.resolution)
