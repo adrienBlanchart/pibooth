@@ -132,8 +132,8 @@ class CvCamera(BaseCamera):
     def get_capture_image(self, effect=None):
         """Capture a new picture.
         """
-        self._cam.set(cv2.CAP_PROP_FRAME_WIDTH, self.resolution[0])
-        self._cam.set(cv2.CAP_PROP_FRAME_HEIGHT, self.resolution[1])
+        #self._cam.set(cv2.CAP_PROP_FRAME_WIDTH, self.resolution[0])
+        #self._cam.set(cv2.CAP_PROP_FRAME_HEIGHT, self.resolution[1])
 
         if self.capture_iso != self.preview_iso:
             self._cam_cam.set(cv2.CAP_PROP_ISO_SPEED, self.capture_iso)
