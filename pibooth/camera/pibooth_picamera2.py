@@ -60,6 +60,9 @@ class Rpi_Picamera2(RpiCamera):
         """
         resolution = self._transform()
         # Create preview configuration
+        if not self._cam:
+            LOGGER.warning('Camera not found')
+            self._cam = get_rpi_picamera2_proxy()
         self._preview_config = self._cam.create_preview_configuration(main={'size':resolution}, 
                                 transform=Transform(hflip=self.preview_flip))
         
