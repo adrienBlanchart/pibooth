@@ -13,6 +13,7 @@ from pibooth.camera.base import BaseCamera
 from libcamera import Transform
 import time
 from pibooth.utils import LOGGER
+import asyncio
 
 
 def get_rpi2_camera_proxy(port=None):
@@ -87,6 +88,28 @@ class RpiCamera2(BaseCamera):
         capture_data.seek(0)
         return Image.open(capture_data)
 
+    async def async_start_preview(self):
+        self._cam.start()
+        self.preview = True
+        try:
+            while self.preview:
+                frame = self._cam.capture_array("main")
+                frame = np.rot90(frame)
+                frame_surface = pygame.surfarray.make_surface(frame)
+                frame_surface = pygame.transform.scale(frame_surface, self.res)
+                self.screen.blit(frame_surface, (0, 0))
+                pygame.display.flip()
+
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        self.running = False
+                        break
+
+                await asyncio.sleep(0.01)  # Petite pause pour éviter d'utiliser 100% de la CPU
+
+        finally:
+            self.stop_preview()
+
     def preview(self, rect, flip=True):
         """Display a preview on the given Rect (flip if necessary).
         """
@@ -115,7 +138,7 @@ class RpiCamera2(BaseCamera):
         #self._cam.start_preview(resolution=(self._rect.width, self._rect.height), hflip=flip,
         #                        fullscreen=False, window=tuple(self._rect))
         LOGGER.debug("Starting preview with rpi camera2")
-        self._cam.start_preview(picamera2.Preview.QTGL, width=self._rect.width, height=self._rect.height, transform=Transform(hflip=1 if flip else 0, vflip=0))
+        self._cam.start_preview(picamera2.Preview.QTGL)#, width=self._rect.width, height=self._rect.height, transform=Transform(hflip=1 if flip else 0, vflip=0))
         LOGGER.debug("Started rpi camera2")
         self._cam.start()
         time.sleep(2)
