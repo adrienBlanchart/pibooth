@@ -23,7 +23,7 @@ def get_rpi2_camera_proxy(port=None):
     :param port: look on given port number
     :type port: int
     """
-    picam2 = Picamera2()
+    picam2 = picamera2.Picamera2()
     camera_config = picam2.create_still_configuration(main={"size": (3280, 2464)}, lores={"size": (640, 480)}, display="lores")
     picam2.configure(camera_config)
     picam2.start_preview(Preview.QTGL)
