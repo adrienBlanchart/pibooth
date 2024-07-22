@@ -10,6 +10,7 @@ try:
 except ImportError:
     picamera2 = None  # picamera2 is optional
 from pibooth.camera.base import BaseCamera
+from libcamera import Transform
 
 
 def get_rpi2_camera_proxy(port=None):
@@ -86,6 +87,7 @@ class RpiCamera2(BaseCamera):
         """
         if self._cam.preview is not None:
             # Already running
+            LOGGER.debug("Preview already started; return")
             return
 
         # Define Rect() object for resizing preview captures to fit to the defined
@@ -102,8 +104,13 @@ class RpiCamera2(BaseCamera):
             else:
                 # Flip again because flipped once at init
                 flip = True
-        self._cam.start_preview(resolution=(self._rect.width, self._rect.height), hflip=flip,
-                                fullscreen=False, window=tuple(self._rect))
+        #picam2.start_preview(Preview.QTGL, x=100, y=200, width=800, height=600, transform=Transform(hflip=1))
+
+        #self._cam.start_preview(resolution=(self._rect.width, self._rect.height), hflip=flip,
+        #                        fullscreen=False, window=tuple(self._rect))
+        self._cam.start_preview(Preview.QTGL, width=self._rect.width, height=self._rect.height, transform=Transform(hflip=1 if flip else 0, vflip=0))
+        self._cam.start()
+
 
     def stop_preview(self):
         """Stop the preview.
