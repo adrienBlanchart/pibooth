@@ -118,6 +118,7 @@ class RpiCamera2(BaseCamera):
         self._cam.start_preview(picamera2.Preview.QTGL, width=self._rect.width, height=self._rect.height, transform=Transform(hflip=1 if flip else 0, vflip=0))
         LOGGER.debug("Started rpi camera2")
         self._cam.start()
+        time.sleep(2)
 
 
     def stop_preview(self):
@@ -131,7 +132,7 @@ class RpiCamera2(BaseCamera):
         """Capture a new picture in a file.
         """
         try:
-            LOGGER.debug("Taking capture with rpi camera")
+            LOGGER.debug("Taking capture with rpi2 camera")
             if self.capture_iso != self.preview_iso:
                 self._cam.iso = self.capture_iso
             if self.capture_rotation != self.preview_rotation:
