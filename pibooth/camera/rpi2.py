@@ -27,8 +27,8 @@ def get_rpi2_camera_proxy(port=None):
         stdout, _stderr = process.communicate()
         if stdout and 'detected=1' in stdout.decode('utf-8'):
             if port is not None:
-                return picamera2.PiCamera2(camera_num=port)
-            return picamera2.PiCamera2()
+                return picamera2.Picamera2(camera_num=port)
+            return picamera2.Picamera2()
     except OSError:
         pass
     return None
@@ -40,7 +40,7 @@ class RpiCamera2(BaseCamera):
     """
 
     if picamera2:
-        IMAGE_EFFECTS = list(picamera2.PiCamera2.IMAGE_EFFECTS.keys())
+        IMAGE_EFFECTS = list(picamera2.Picamera2.IMAGE_EFFECTS.keys())
 
     def _specific_initialization(self):
         """Camera initialization.
