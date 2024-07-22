@@ -39,8 +39,8 @@ class RpiCamera2(BaseCamera):
     """Camera management
     """
 
-    if picamera2:
-        IMAGE_EFFECTS = list(picamera2.Picamera2.IMAGE_EFFECTS.keys())
+    #if picamera2:
+    #    IMAGE_EFFECTS = list(picamera2.Picamera2.IMAGE_EFFECTS.keys())
 
     def _specific_initialization(self):
         """Camera initialization.
