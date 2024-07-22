@@ -29,6 +29,8 @@ def get_rpi2_camera_proxy(port=None):
         picam2 = picamera2.Picamera2()
         picam2.start()
         metadata = picam2.capture_metadata()
+        LOGGER.debug("Metadata: %s", metadata)
+        LOGGER.debug("controls: %s", picam2.camera_controls)
         picam2.stop()
         if metadata and metadata["ExposureTime"]: # Check if camera is detected by checking if metadata is returned and if ExposureTime is present
             return picam2
@@ -97,7 +99,7 @@ class RpiCamera2(BaseCamera):
         # Define Rect() object for resizing preview captures to fit to the defined
         # preview rect keeping same aspect ratio than camera resolution.
         size = sizing.new_size_keep_aspect_ratio(self.resolution, (min(
-            rect.width, self._cam.MAX_RESOLUTION[0]), min(rect.height, self._cam.MAX_RESOLUTION[1])))
+            rect.width, 3280), min(rect.height, 2464)))
         self._rect = pygame.Rect(rect.centerx - size[0] // 2, rect.centery - size[1] // 2, size[0], size[1])
 
         self.preview_flip = flip
