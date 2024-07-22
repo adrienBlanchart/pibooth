@@ -23,17 +23,26 @@ def get_rpi2_camera_proxy(port=None):
     :type port: int
     """
     if not picamera2:
+        LOGGER.warning("picamera2 is not installed")
         return None  # picamera2 is not installed
     try:
         process = subprocess.Popen(['vcgencmd', 'get_camera'],
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, _stderr = process.communicate()
         if stdout and 'detected=1' in stdout.decode('utf-8'):
+            LOGGER.debug("Camera detected")
+            LOGGER.debug(stdout.decode('utf-8'))
             if port is not None:
                 return picamera2.Picamera2(camera_num=port)
             return picamera2.Picamera2()
+        picam2 = picamera2.Picamera2()
+        picam2.start()
+        metadata = picam2.capture_metadata()
+        LOGGER.debug(metadata)
+        picam2.stop()
     except OSError:
         pass
+    LOGGER.warning("picamera2 is not installed or camera not found")
     return None
 
 
