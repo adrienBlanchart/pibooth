@@ -2,7 +2,7 @@
 
 from pibooth.utils import LOGGER
 from pibooth.camera.rpi import RpiCamera, get_rpi_camera_proxy
-from pibooth.camera.pibooth_picamera2 import Rpi_Picamera2, get_rpi_picamera2_proxy
+from pibooth.camera.rpi2 import RpiCamera2, get_rpi2_camera_proxy
 from pibooth.camera.gphoto import GpCamera, get_gp_camera_proxy
 from pibooth.camera.opencv import CvCamera, get_cv_camera_proxy
 from pibooth.camera.libcamera import LibCamera, get_libcamera_camera_proxy
@@ -14,7 +14,7 @@ def close_proxy(rpi_cam_proxy, gp_cam_proxy, cv_cam_proxy, lib_cam_proxy, is_rpi
     """
     if rpi_cam_proxy:
         if is_rpi2_proxy:
-            Rpi_Picamera2(rpi_cam_proxy).quit()
+            RpiCamera2(rpi_cam_proxy).quit()
         else:
             RpiCamera(rpi_cam_proxy).quit()
     if gp_cam_proxy:
@@ -32,9 +32,9 @@ def find_camera():
     concurence in case of DSLR compatible with OpenCV.
     """
     rpi_cam_proxy_1 = get_rpi_camera_proxy()
-    rpi_picamera2_proxy = get_rpi_picamera2_proxy()
-    rpi_cam_proxy = rpi_picamera2_proxy if rpi_picamera2_proxy else rpi_cam_proxy_1
-    is_rpi2_proxy = True if rpi_picamera2_proxy else False
+    rpi2_cam_proxy_2 = get_rpi2_camera_proxy()
+    rpi_cam_proxy = rpi2_cam_proxy_2 if rpi2_cam_proxy_2 else rpi_cam_proxy_1
+    is_rpi2_proxy = True if rpi2_cam_proxy_2 else False
 
     #If both RpiCamera and RpiCamera2 are detected, close the one that is not used
     if rpi_cam_proxy:
@@ -62,10 +62,9 @@ def find_camera():
         return GpCamera(gp_cam_proxy)
     if rpi_cam_proxy:
         LOGGER.info("Configuring Picamera camera ...")
-        return Rpi_Picamera2(rpi_picamera2_proxy)
         close_proxy(None, gp_cam_proxy, cv_cam_proxy, lib_cam_proxy, is_rpi2_proxy)
         if is_rpi2_proxy:
-            return Rpi_Picamera2(rpi_cam_proxy)
+            return RpiCamera2(rpi_cam_proxy)
         return RpiCamera(rpi_cam_proxy)
     if lib_cam_proxy:
         LOGGER.info("Configuring Libcamera camera ...")
