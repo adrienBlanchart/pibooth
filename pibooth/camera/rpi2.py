@@ -11,6 +11,7 @@ except ImportError:
     picamera2 = None  # picamera2 is optional
 from pibooth.camera.base import BaseCamera
 from libcamera import Transform
+import time
 
 
 def get_rpi2_camera_proxy(port=None):
@@ -85,6 +86,7 @@ class RpiCamera2(BaseCamera):
     def preview(self, rect, flip=True):
         """Display a preview on the given Rect (flip if necessary).
         """
+        LOGGER.debug("Starting preview with rpi camera2")
         if self._cam.preview is not None:
             # Already running
             LOGGER.debug("Preview already started; return")
@@ -97,19 +99,22 @@ class RpiCamera2(BaseCamera):
         self._rect = pygame.Rect(rect.centerx - size[0] // 2, rect.centery - size[1] // 2, size[0], size[1])
 
         self.preview_flip = flip
-        if self._cam.hflip:
+        """ if self._cam.hflip:
             if self.preview_flip:
                 # Don't flip again, already done at init
                 flip = False
             else:
                 # Flip again because flipped once at init
-                flip = True
+                flip = True """
         #picam2.start_preview(Preview.QTGL, x=100, y=200, width=800, height=600, transform=Transform(hflip=1))
 
         #self._cam.start_preview(resolution=(self._rect.width, self._rect.height), hflip=flip,
         #                        fullscreen=False, window=tuple(self._rect))
+        LOGGER.debug("Starting preview with rpi camera2")
         self._cam.start_preview(Preview.QTGL, width=self._rect.width, height=self._rect.height, transform=Transform(hflip=1 if flip else 0, vflip=0))
+        LOGGER.debug("Started rpi camera2")
         self._cam.start()
+        time.sleep(2)
 
 
     def stop_preview(self):
