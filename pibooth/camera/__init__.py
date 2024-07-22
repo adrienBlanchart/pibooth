@@ -32,7 +32,7 @@ def find_camera():
     concurence in case of DSLR compatible with OpenCV.
     """
     rpi_cam_proxy_1 = get_rpi_camera_proxy()
-    get_rpi_picamera2_proxy = get_rpi2_camera_proxy()
+    get_rpi_picamera2_proxy = get_rpi_picamera2_proxy()
     rpi_cam_proxy = get_rpi_picamera2_proxy if get_rpi_picamera2_proxy else rpi_cam_proxy_1
     is_rpi2_proxy = True if get_rpi_picamera2_proxy else False
 
