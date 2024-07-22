@@ -12,6 +12,7 @@ except ImportError:
 from pibooth.camera.base import BaseCamera
 from libcamera import Transform
 import time
+from pibooth.utils import LOGGER
 
 
 def get_rpi2_camera_proxy(port=None):
