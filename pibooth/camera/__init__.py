@@ -60,16 +60,16 @@ def find_camera():
         LOGGER.info("Configuring gPhoto2 camera ...")
         close_proxy(rpi_cam_proxy, None, cv_cam_proxy, lib_cam_proxy, is_rpi2_proxy)
         return GpCamera(gp_cam_proxy)
-    if lib_cam_proxy:
-        LOGGER.info("Configuring Libcamera camera ...")
-        close_proxy(rpi_cam_proxy, gp_cam_proxy, cv_cam_proxy, None, is_rpi2_proxy)
-        return LibCamera(lib_cam_proxy)
     if rpi_cam_proxy:
         LOGGER.info("Configuring Picamera camera ...")
         close_proxy(None, gp_cam_proxy, cv_cam_proxy, lib_cam_proxy, is_rpi2_proxy)
         if is_rpi2_proxy:
             return RpiCamera2(rpi_cam_proxy)
         return RpiCamera(rpi_cam_proxy)
+    if lib_cam_proxy:
+        LOGGER.info("Configuring Libcamera camera ...")
+        close_proxy(rpi_cam_proxy, gp_cam_proxy, cv_cam_proxy, None, is_rpi2_proxy)
+        return LibCamera(lib_cam_proxy)
     if cv_cam_proxy:
         LOGGER.info("Configuring OpenCV camera ...")
         close_proxy(rpi_cam_proxy, gp_cam_proxy, None, lib_cam_proxy, is_rpi2_proxy)
