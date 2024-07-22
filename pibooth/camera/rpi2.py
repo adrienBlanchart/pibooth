@@ -115,7 +115,7 @@ class RpiCamera2(BaseCamera):
         #self._cam.start_preview(resolution=(self._rect.width, self._rect.height), hflip=flip,
         #                        fullscreen=False, window=tuple(self._rect))
         LOGGER.debug("Starting preview with rpi camera2")
-        self._cam.start_preview(Preview.QTGL, width=self._rect.width, height=self._rect.height, transform=Transform(hflip=1 if flip else 0, vflip=0))
+        self._cam.start_preview(picamera2.Preview.QTGL, width=self._rect.width, height=self._rect.height, transform=Transform(hflip=1 if flip else 0, vflip=0))
         LOGGER.debug("Started rpi camera2")
         self._cam.start()
 
