@@ -62,6 +62,7 @@ def find_camera():
         return GpCamera(gp_cam_proxy)
     if rpi_cam_proxy:
         LOGGER.info("Configuring Picamera camera ...")
+        return Rpi_Picamera2(rpi_cam_proxy)
         close_proxy(None, gp_cam_proxy, cv_cam_proxy, lib_cam_proxy, is_rpi2_proxy)
         if is_rpi2_proxy:
             return Rpi_Picamera2(rpi_cam_proxy)
