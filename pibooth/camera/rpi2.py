@@ -32,7 +32,7 @@ def get_rpi2_camera_proxy(port=None):
         metadata = picam2.capture_metadata()
         LOGGER.debug("Metadata: %s", metadata)
         LOGGER.debug("controls: %s", picam2.camera_controls)
-        picam2.stop()
+        #picam2.stop()
         if metadata and metadata["ExposureTime"]: # Check if camera is detected by checking if metadata is returned and if ExposureTime is present
             return picam2
     except OSError:
