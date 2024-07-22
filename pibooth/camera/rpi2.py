@@ -89,10 +89,10 @@ class RpiCamera2(BaseCamera):
         """Display a preview on the given Rect (flip if necessary).
         """
         LOGGER.debug("Starting preview with rpi camera2")
-        if self._cam.preview is not None:
+        """ if self._cam.preview is not None:
             # Already running
             LOGGER.debug("Preview already started; return")
-            return
+            return """
 
         # Define Rect() object for resizing preview captures to fit to the defined
         # preview rect keeping same aspect ratio than camera resolution.
@@ -116,7 +116,6 @@ class RpiCamera2(BaseCamera):
         self._cam.start_preview(Preview.QTGL, width=self._rect.width, height=self._rect.height, transform=Transform(hflip=1 if flip else 0, vflip=0))
         LOGGER.debug("Started rpi camera2")
         self._cam.start()
-        time.sleep(2)
 
 
     def stop_preview(self):
