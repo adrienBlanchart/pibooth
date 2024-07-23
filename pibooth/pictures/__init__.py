@@ -11,6 +11,7 @@ from pibooth import language
 from pibooth import fonts
 from pibooth.pictures import factory
 from pibooth.pictures import sizing
+from pibooth.utils import LOGGER
 
 
 AUTO = 'auto'
