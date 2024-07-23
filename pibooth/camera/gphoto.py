@@ -9,7 +9,7 @@ except ImportError:
     gp = None  # gphoto2 is optional
 from PIL import Image, ImageFilter
 from pibooth.pictures import sizing
-from pibooth.utils import LOGGER, PoolingTimer, pkill
+from pibooth.utils import LOGGER, PollingTimer, pkill
 from pibooth.language import get_translated_text
 from pibooth.camera.base import BaseCamera
 
@@ -229,7 +229,7 @@ class GpCamera(BaseCamera):
 
         shown = False
         first_loop = True
-        timer = PoolingTimer(timeout)
+        timer = PollingTimer(timeout)
         while not timer.is_timeout():
             remaining = int(timer.remaining() + 1)
             if not self._overlay or remaining != timeout:
@@ -263,7 +263,7 @@ class GpCamera(BaseCamera):
         if timeout < 1:
             raise ValueError("Start time shall be greater than 0")
 
-        timer = PoolingTimer(timeout)
+        timer = PollingTimer(timeout)
         if self._preview_compatible:
             while not timer.is_timeout():
                 updated_rect = self._window.show_image(self._get_preview_image())
