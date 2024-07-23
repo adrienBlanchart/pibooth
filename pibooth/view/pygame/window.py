@@ -250,7 +250,7 @@ class PygameWindow(BaseWindow):
         """Draw all Sprites on surface and return updated Pygame rects.
         """
         rects = []
-
+        LOGGER.debug("Draw all sprites on surface")
         if self.scene and (not self._menu or not self._menu.is_enabled()):
             rects += self.scene.draw(self.surface, self._force_redraw)
 
@@ -260,6 +260,7 @@ class PygameWindow(BaseWindow):
             rects += self._menu.draw(self.surface)
 
         self._force_redraw = False
+        LOGGER.debug("Draw done")
         return rects
 
     def eventloop(self, app_update):
@@ -286,9 +287,9 @@ class PygameWindow(BaseWindow):
 
             # 3. Draw on buffer view elements which have changed
             rects = self.draw()
-
+            LOGGER.debug("Drawn on buffer")
             # 4. Update dirty rects on screen (the most time-consuming action)
             pygame.display.update(rects)
-
+            LOGGER.debug("Updated screen")
             # 5. Ensure the program will never run at more than <fps> frames per second
             clock.tick(fps)
