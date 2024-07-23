@@ -16,13 +16,11 @@ from PIL import Image
 
 from pibooth.utils import LOGGER
 from pibooth.camera.rpi import RpiCamera
-
 from pibooth.language import get_translated_text
 
 
 # Release version
 __version__ = "1.0.1"
-
 
 def get_rpi_picamera2_proxy():
     
@@ -55,27 +53,22 @@ class Rpi_Picamera2(RpiCamera):
         super().__init__(camera_proxy)
         self._preview_config = None
         self._capture_config = None
-        LOGGER.info('Picamera2 initialized')
         
     def _specific_initialization(self):
         """Camera initialization.
         """
         resolution = self._transform()
         # Create preview configuration
-        LOGGER.info('Creating preview configuration')
-            
         self._preview_config = self._cam.create_preview_configuration(main={'size':resolution}, 
                                 transform=Transform(hflip=self.preview_flip))
         
         self._capture_config = self._cam.create_still_configuration(main={'size':resolution},
                                 transform=Transform(hflip=self.capture_flip))
-        LOGGER.info('Preview and Capture configurations created')
-        
     
     def _show_overlay(self, text, alpha):
         """Add an image as an overlay
         """
-        if self._rect:
+        if self._window:
             # return a rect the size of the preview window(Keep overlay the same with
             # rotate=False)
             rect = self.get_rect(self.MAX_RESOLUTION, rotate=False)
@@ -109,7 +102,7 @@ class Rpi_Picamera2(RpiCamera):
         else:
             return self.resolution
     
-    def _rotate_image(self, image:pygame.Surface):
+    def _rotate_image(self, image:PIL.Image.Image | pygame.Surface):
         """Rotate image clockwise"""
         # Camera rotation is the same for both preview and capture
         if self.capture_rotation != 0 and self.preview_rotation != 0:
@@ -133,7 +126,7 @@ class Rpi_Picamera2(RpiCamera):
             # Preview is still running
             return
         # create rect dimensions for preview window
-        self._rect = window
+        self._window = window
         
         # if the camera image has been flipped don't flip a second time
         # The flip overrides any previous flip value
@@ -200,11 +193,11 @@ class Rpi_Picamera2(RpiCamera):
         pg_image = pygame.image.frombuffer(res.data, 
                     (rect.width, rect.height), 'RGBX')
         pg_image = self._rotate_image(pg_image)
-        screen_rect = self._rect
-        self._rect.blit(pg_image,
+        screen_rect = self._window.surface.get_rect()
+        self._window.surface.blit(pg_image,
                                 pg_image.get_rect(center=screen_rect.center))
         if self._overlay:
-            self._rect.blit(self._overlay, self._overlay.get_rect(center=screen_rect.center))
+            self._window.surface.blit(self._overlay, self._overlay.get_rect(center=screen_rect.center))
         pygame.display.update() 
 
     def stop_preview(self):
