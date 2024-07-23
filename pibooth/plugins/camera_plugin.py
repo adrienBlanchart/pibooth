@@ -58,7 +58,7 @@ class CameraPlugin(object):
 
     @pibooth.hookimpl
     def state_preview_enter(self, cfg, app, win):
-        LOGGER.info("Show preview before next capture")
+        LOGGER.info("Enter preview before next capture")
         if not app.capture_date:
             app.capture_date = time.strftime("%Y-%m-%d-%H-%M-%S")
         app.camera.preview(win)
