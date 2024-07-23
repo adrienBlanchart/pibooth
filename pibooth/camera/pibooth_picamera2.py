@@ -60,11 +60,12 @@ class Rpi_Picamera2(RpiCamera):
         """Camera initialization.
         """
         resolution = self._transform()
+        capture_resolution = self._transform_capture()
         # Create preview configuration
         self._preview_config = self._cam.create_preview_configuration(main={'size':resolution}, 
                                 transform=Transform(hflip=self.preview_flip))
         
-        self._capture_config = self._cam.create_still_configuration(main={'size':resolution},
+        self._capture_config = self._cam.create_still_configuration(main={'size':capture_resolution},
                                 transform=Transform(hflip=self.capture_flip))
     
     def _show_overlay(self, text, alpha):
@@ -104,6 +105,13 @@ class Rpi_Picamera2(RpiCamera):
             return self.resolution[1], self.resolution[0]
         else:
             return self.resolution
+
+    def _transform_capture(self):
+        """Return tuple for configuring picamera"""
+        if self.preview_rotation in (90,270):
+            return self.capture_resolution[1], self.capture_resolution[0]
+        else:
+            return self.capture_resolution
     
     #def _rotate_image(self, image:PIL.Image.Image | pygame.Surface):
     def _rotate_image(self, image):
