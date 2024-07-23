@@ -203,13 +203,10 @@ class PygameWindow(BaseWindow):
             elif self._keyboard.is_enabled() and event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self._keyboard.disable()
             #handle right click to open menu too
-            elif ((event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE) or (event.type == pygame.MOUSEBUTTONDOWN and event.button == 3) or evts.is_fingers_event(event, 4)):
-                if self.is_menu_shown:
-                    LOGGER.debug("Event triggered: KEY ESCAPE and menu is shown -> close menu")
-                    self._menu.back()
-                else:
-                    LOGGER.debug("Event triggered: KEY ESCAPE -> generate EVT_BUTTON_SETTINGS")
-                    self.toggle_menu()
+            elif ((event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE) or (event.type == pygame.MOUSEBUTTONDOWN and event.button == 3) or evts.is_fingers_event(event, 4))\
+                    and not self.is_menu_shown:
+                LOGGER.debug("Event triggered: KEY ESCAPE -> generate EVT_BUTTON_SETTINGS")
+                evts.post(evts.EVT_BUTTON_SETTINGS)  # Use HW event to update sprites if necessary
 
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_c:
                 LOGGER.debug("Event triggered: KEY C -> generate EVT_BUTTON_CAPTURE")
@@ -250,7 +247,7 @@ class PygameWindow(BaseWindow):
         """Draw all Sprites on surface and return updated Pygame rects.
         """
         rects = []
-        LOGGER.debug("Draw all sprites on surface")
+
         if self.scene and (not self._menu or not self._menu.is_enabled()):
             rects += self.scene.draw(self.surface, self._force_redraw)
 
@@ -260,7 +257,6 @@ class PygameWindow(BaseWindow):
             rects += self._menu.draw(self.surface)
 
         self._force_redraw = False
-        LOGGER.debug("Draw done")
         return rects
 
     def eventloop(self, app_update):
@@ -287,9 +283,9 @@ class PygameWindow(BaseWindow):
 
             # 3. Draw on buffer view elements which have changed
             rects = self.draw()
-            LOGGER.debug("Drawn on buffer")
+
             # 4. Update dirty rects on screen (the most time-consuming action)
             pygame.display.update(rects)
-            LOGGER.debug("Updated screen")
+
             # 5. Ensure the program will never run at more than <fps> frames per second
             clock.tick(fps)
