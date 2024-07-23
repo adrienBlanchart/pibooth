@@ -83,6 +83,7 @@ class Rpi_Picamera2(RpiCamera):
 
             # convert pil image to pygame.Surface
             self._overlay = pygame.image.frombuffer(image.tobytes(),size,'RGBA')
+            LOGGER.info(f'Overlay: {self._overlay}')
             self.update_preview()
 
     def _hide_overlay(self):
@@ -205,6 +206,7 @@ class Rpi_Picamera2(RpiCamera):
         if self._overlay:
             self._window.surface.blit(self._overlay, self._overlay.get_rect(center=screen_rect.center))
         pygame.display.update() 
+        LOGGER.info('Updated preview')
 
     def stop_preview(self):
         if self._cam._preview:
