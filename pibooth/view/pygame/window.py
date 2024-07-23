@@ -202,8 +202,8 @@ class PygameWindow(BaseWindow):
 
             elif self._keyboard.is_enabled() and event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self._keyboard.disable()
-
-            elif ((event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE) or evts.is_fingers_event(event, 4))\
+            #handle right click to open menu too
+            elif ((event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE) or (event.type == pygame.MOUSEBUTTONDOWN and event.button == 3) or evts.is_fingers_event(event, 4))\
                     and not self.is_menu_shown:
                 LOGGER.debug("Event triggered: KEY ESCAPE -> generate EVT_BUTTON_SETTINGS")
                 evts.post(evts.EVT_BUTTON_SETTINGS)  # Use HW event to update sprites if necessary
