@@ -63,6 +63,23 @@ class CameraPlugin(object):
         app.camera.preview(win)
 
     @pibooth.hookimpl
+    def state_capture_enter(self, cfg, app):
+        effects = cfg.gettyped('PICTURE', 'captures_effects')
+        if not app.capture_date:
+            app.capture_date = time.strftime("%Y-%m-%d-%H-%M-%S")		 
+        if not isinstance(effects, (list, tuple)):
+            # Same effect for all captures
+            effect = effects
+        elif len(effects) >= app.capture_nbr:
+            # Take the effect corresponding to the current capture
+            effect = effects[self.capture_count]
+        else:
+            # Not possible
+            raise ValueError(f"Not enough effects defined for {app.capture_nbr} captures {effects}")
+        LOGGER.info("Take a capture")								
+        app.camera.capture(effect)
+
+    @pibooth.hookimpl
     def state_preview_do(self, cfg, app):
         pygame.event.pump()  # Before blocking actions
         if cfg.getboolean('WINDOW', 'preview_countdown'):
@@ -80,29 +97,6 @@ class CameraPlugin(object):
         event = evts.find_event(events, evts.EVT_PIBOOTH_CAM_CAPTURE)
         if event:
             self.count += 1
-
-    """ @pibooth.hookimpl
-    def state_capture_do(self, cfg, app, win):
-        effects = cfg.gettyped('PICTURE', 'captures_effects')
-        if not isinstance(effects, (list, tuple)):
-            # Same effect for all captures
-            effect = effects
-        elif len(effects) >= app.capture_nbr:
-            # Take the effect corresponding to the current capture
-            effect = effects[self.count]
-        else:
-            # Not possible
-            raise ValueError("Not enough effects defined for {} captures {}".format(
-                app.capture_nbr, effects))
-
-        LOGGER.info("Take a capture")
-        if cfg.getboolean('WINDOW', 'flash'):
-            with win.flash(2):  # Manage the window here, have no choice
-                app.camera.capture(effect)
-        else:
-            app.camera.capture(effect)
-
-        self.count += 1 """
 
     @pibooth.hookimpl
     def state_capture_exit(self, cfg, app):
