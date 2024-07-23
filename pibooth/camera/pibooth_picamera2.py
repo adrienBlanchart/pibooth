@@ -102,7 +102,7 @@ class Rpi_Picamera2(RpiCamera):
         else:
             return self.resolution
     
-    def _rotate_image(self, pygame.Surface):
+    def _rotate_image(self, image):
         """Rotate image clockwise"""
         # Camera rotation is the same for both preview and capture
         if self.capture_rotation != 0 and self.preview_rotation != 0:
