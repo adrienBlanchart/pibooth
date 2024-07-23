@@ -39,10 +39,13 @@ def find_camera():
     #If both RpiCamera and RpiCamera2 are detected, close the one that is not used
     if rpi_cam_proxy:
         close_proxy(rpi_cam_proxy, None, None, None, not is_rpi2_proxy)
+    else: #don't try to open libcamera and cv2 if rpi camera is detected
+        lib_cam_proxy = get_libcamera_camera_proxy()
+        cv_cam_proxy = get_cv_camera_proxy()
+
+
 
     gp_cam_proxy = get_gp_camera_proxy()
-    cv_cam_proxy = get_cv_camera_proxy()
-    lib_cam_proxy = get_libcamera_camera_proxy()
 
     if lib_cam_proxy and gp_cam_proxy:
         LOGGER.info("Configuring hybrid camera (Libcamera + gPhoto2) ...")
