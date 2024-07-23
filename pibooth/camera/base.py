@@ -7,6 +7,7 @@ from pibooth import fonts, evts
 from pibooth.tasks import AsyncTask
 from pibooth.pictures import sizing
 from pibooth.fonts import write_on_pil_image
+from pibooth.utils import LOGGER
 
 class BaseCamera:
     """Base class for camera.
@@ -47,6 +48,7 @@ class BaseCamera:
     def initialize(self, iso, resolution, rotation=0, flip=False, delete_internal_memory=False):
         """Initialize the camera.
         """
+        LOGGER.debug("Initialize camera with iso=%s, resolution=%s, rotation=%s, flip=%s, delete_internal_memory=%s", iso, resolution, rotation, flip, delete_internal_memory)
         if not isinstance(rotation, (tuple, list)):
             rotation = (rotation, rotation)
         self.preview_rotation, self.capture_rotation = rotation

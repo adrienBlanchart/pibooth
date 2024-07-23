@@ -39,9 +39,9 @@ def find_camera():
     lib_cam_proxy = None
     cv_cam_proxy = None
     #If both RpiCamera and RpiCamera2 are detected, close the one that is not used
-    if rpi_cam_proxy:
-        close_proxy(rpi_cam_proxy, None, None, None, not is_rpi2_proxy)
-    else: #don't try to open libcamera and cv2 if rpi camera is detected
+    #if rpi_cam_proxy:
+    #    close_proxy(rpi_cam_proxy, None, None, None, not is_rpi2_proxy)
+    if not rpi_cam_proxy: #don't try to open libcamera and cv2 if rpi camera is detected
         lib_cam_proxy = get_libcamera_camera_proxy()
         cv_cam_proxy = get_cv_camera_proxy()
 
@@ -68,7 +68,7 @@ def find_camera():
     if rpi_cam_proxy:
         LOGGER.info("Configuring Picamera camera ...")
         close_proxy(None, gp_cam_proxy, cv_cam_proxy, lib_cam_proxy, is_rpi2_proxy)
-        return Rpi_Picamera2(rpi_picamera2_proxy)    
+        return Rpi_Picamera2(rpi_cam_proxy)    
         if is_rpi2_proxy:
             return Rpi_Picamera2(rpi_cam_proxy)
         return RpiCamera(rpi_cam_proxy)
