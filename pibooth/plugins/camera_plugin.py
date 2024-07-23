@@ -5,6 +5,7 @@ import pygame
 import pibooth
 from pibooth import camera
 from pibooth.utils import LOGGER
+from pibooth import evts
 
 
 class CameraPlugin(object):
@@ -53,7 +54,7 @@ class CameraPlugin(object):
             app.capture_nbr = None
         else:
             app.capture_nbr = app.capture_choices[0]
-
+""" 
     @pibooth.hookimpl
     def state_choose_do(self, app, events):
         event = app.find_choice_event(events)
@@ -62,7 +63,7 @@ class CameraPlugin(object):
                 app.capture_nbr = app.capture_choices[0]
             elif event.key == pygame.K_RIGHT:
                 app.capture_nbr = app.capture_choices[1]
-
+ """
     @pibooth.hookimpl
     def state_preview_enter(self, cfg, app, win):
         LOGGER.info("Show preview before next capture")
@@ -84,6 +85,12 @@ class CameraPlugin(object):
             app.camera.stop_preview()
 
     @pibooth.hookimpl
+    def state_capture_do(self, events):
+        event = evts.find_event(events, evts.EVT_PIBOOTH_CAM_CAPTURE)
+        if event:
+            self.count += 1
+
+    """ @pibooth.hookimpl
     def state_capture_do(self, cfg, app, win):
         effects = cfg.gettyped('PICTURE', 'captures_effects')
         if not isinstance(effects, (list, tuple)):
@@ -104,7 +111,7 @@ class CameraPlugin(object):
         else:
             app.camera.capture(effect)
 
-        self.count += 1
+        self.count += 1 """
 
     @pibooth.hookimpl
     def state_capture_exit(self, cfg, app):
