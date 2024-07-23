@@ -3,19 +3,43 @@
 import pygame
 from PIL import Image, ImageDraw
 
-from pibooth import fonts
+from pibooth import fonts, evts
+from pibooth.tasks import AsyncTask
 from pibooth.pictures import sizing
+from pibooth.fonts import write_on_pil_image
+from pibooth.utils import LOGGER
 
+class BaseCamera:
+    """Base class for camera.
 
-class BaseCamera(object):
+    :py:class:`BaseCamera` emits the following events consumed by plugins:
+
+    - EVT_PIBOOTH_CAM_PREVIEW
+    - EVT_PIBOOTH_CAM_CAPTURE
+    """
+
+    IMAGE_EFFECTS = [u'none',
+                     u'blur',
+                     u'contour',
+                     u'detail',
+                     u'edge_enhance',
+                     u'edge_enhance_more',
+                     u'emboss',
+                     u'find_edges',
+                     u'smooth',
+                     u'smooth_more',
+                     u'sharpen']
 
     def __init__(self, camera_proxy):
         self._cam = camera_proxy
         self._border = 50
-        self._window = None
+        self._rect = None
         self._overlay = None
+        self._overlay_text = None
+        self._overlay_alpha = 60
         self._captures = []
-
+        self._worker = None
+        
         self.resolution = None
         self.delete_internal_memory = False
         self.preview_rotation, self.capture_rotation = (0, 0)
@@ -25,14 +49,14 @@ class BaseCamera(object):
     def initialize(self, iso, resolution, rotation=0, flip=False, delete_internal_memory=False):
         """Initialize the camera.
         """
+        LOGGER.debug("Initialize camera with iso=%s, resolution=%s, rotation=%s, flip=%s, delete_internal_memory=%s", iso, resolution, rotation, flip, delete_internal_memory)
         if not isinstance(rotation, (tuple, list)):
             rotation = (rotation, rotation)
         self.preview_rotation, self.capture_rotation = rotation
         for name in ('preview', 'capture'):
-            rotation = getattr(self, '{}_rotation'.format(name))
+            rotation = getattr(self, f'{name}_rotation')
             if rotation not in (0, 90, 180, 270):
-                raise ValueError(
-                    "Invalid {} camera rotation value '{}' (should be 0, 90, 180 or 270)".format(name, rotation))
+                raise ValueError(f"Invalid {name} camera rotation value '{rotation}' (should be 0, 90, 180 or 270)")
         self.resolution = resolution
         self.capture_flip = flip
         if not isinstance(iso, (tuple, list)):
@@ -46,80 +70,99 @@ class BaseCamera(object):
         """
         pass
 
-    def _show_overlay(self, text, alpha):
-        """Add an image as an overlay.
+    def set_overlay(self, text, alpha=60):
+        """Show a text over on the preview.
         """
-        self._overlay = text
-
-    def _hide_overlay(self):
-        """Remove any existing overlay.
-        """
-        if self._overlay is not None:
-            self._overlay = None
-
-    def _post_process_capture(self, capture_data):
-        """Rework and return a PIL Image object from capture data.
-        """
-        raise NotImplementedError
-
-    def get_rect(self, max_size=None):
-        """Return a Rect object (as defined in pygame) for resizing preview and images
-        in order to fit to the defined window.
-        """
-        rect = self._window.get_rect(absolute=True)
-        size = (rect.width - 2 * self._border, rect.height - 2 * self._border)
-        if max_size:
-            size = (min(size[0], max_size[0]), min(size[1], max_size[1]))
-        res = sizing.new_size_keep_aspect_ratio(self.resolution, size)
-        return pygame.Rect(rect.centerx - res[0] // 2, rect.centery - res[1] // 2, res[0], res[1])
+        if self._rect is None:
+            raise IOError("Preview is not started")
+        if text is None:
+            self._hide_overlay()
+        elif str(text) != self._overlay_text:
+            self._overlay_text = str(text)
+            self._overlay_alpha = alpha
+            self._show_overlay()
 
     def build_overlay(self, size, text, alpha):
         """Return a PIL image with the given text that can be used
         as an overlay for the camera.
         """
         image = Image.new('RGBA', size)
-        draw = ImageDraw.Draw(image)
-
-        font = fonts.get_pil_font(text, fonts.CURRENT, 0.9 * size[0], 0.9 * size[1])
-        txt_width, txt_height = draw.textsize(text, font=font)
-
-        position = ((size[0] - txt_width) // 2, (size[1] - txt_height) // 2 - size[1] // 10)
-        draw.text(position, text, (255, 255, 255, alpha), font=font)
+        width, height = 0.9 * size[0], 0.9 * size[1]
+        posx, posy = (size[0] - width) // 2, (size[1] - height) // 2
+        write_on_pil_image(image, text, posx, posy, width, height, color=(255, 255, 255, alpha))
         return image
 
-    def preview(self, window, flip=True):
-        """Setup the preview.
+    def _show_overlay(self):
+        """Add an image as an overlay.
+        """
+        self._overlay = self.build_overlay(self._rect.size,
+                                           self._overlay_text,
+                                           self._overlay_alpha)
+
+    def _hide_overlay(self):
+        """Remove any existing overlay.
+        """
+        if self._overlay is not None:
+            self._overlay = None
+            self._overlay_text = None
+
+    def get_preview_image(self):
+        """Return a new image fit to the preview rect.
         """
         raise NotImplementedError
 
-    def preview_countdown(self, timeout, alpha=60):
-        """Show a countdown of `timeout` seconds on the preview.
-        Returns when the countdown is finished.
+    def preview(self, rect, flip=True):
+        """Start the preview fitting the given Rect object.
         """
-        raise NotImplementedError
+        if self._worker and self._worker.is_alive():
+            # Already running
+            return
 
-    def preview_wait(self, timeout, alpha=60):
-        """Wait the given time and let doing the job.
-        Returns when the timeout is reached.
-        """
-        raise NotImplementedError
+        # Define Rect() object for resizing preview captures to fit to the defined
+        # preview rect keeping same aspect ratio than camera resolution.
+        size = sizing.new_size_keep_aspect_ratio(self.resolution, (rect.width, rect.height))
+        self._rect = pygame.Rect(rect.centerx - size[0] // 2, rect.centery - size[1] // 2, size[0], size[1])
+
+        self.preview_flip = flip
+        self._worker = AsyncTask(self.get_preview_image, event=evts.EVT_PIBOOTH_CAM_PREVIEW, loop=True)
 
     def stop_preview(self):
         """Stop the preview.
         """
-        raise NotImplementedError
+        if self._worker:
+            self._worker.kill()
+            self._worker = None
+        self._rect = None
+        self._hide_overlay()
 
-    def capture(self, effect=None):
-        """Capture a new picture.
+    def _process_capture(self, capture_data):
+        """Rework and return a PIL Image object from capture data.
         """
         raise NotImplementedError
 
-    def get_captures(self):
+    def get_capture_image(self, effect=None):
+        """Return a new full resolution image.
+        """
+        raise NotImplementedError
+
+    def capture(self, effect=None, wait=False):
+        """Take a new capture and add it to internal buffer.
+        """
+        effect = str(effect).lower()
+        if effect not in self.IMAGE_EFFECTS:
+            raise ValueError(f"Invalid capture effect '{effect}' (choose among {self.IMAGE_EFFECTS})")
+
+        if self._worker:
+            self.stop_preview()
+
+        self._worker = AsyncTask(self.get_capture_image, (effect,), event=evts.EVT_PIBOOTH_CAM_CAPTURE)
+        if wait:
+            self._worker.wait()
+
+    def grab_captures(self):
         """Return all buffered captures as PIL images (buffer dropped after call).
         """
-        images = []
-        for data in self._captures:
-            images.append(self._post_process_capture(data))
+        images = [self._process_capture(data) for data in self._captures]
         self.drop_captures()
         return images
 
@@ -131,4 +174,22 @@ class BaseCamera(object):
     def quit(self):
         """Close the camera driver, it's definitive.
         """
-        raise NotImplementedError
+        if self._worker:
+            self._worker.kill()
+        self._specific_cleanup()
+
+    def _specific_cleanup(self):
+        """Specific camera cleanup.
+        """
+        pass
+
+    def get_rect(self, max_size=None):
+        """Return a Rect object (as defined in pygame) for resizing preview and images
+        in order to fit to the defined window.
+        """
+        rect = self._rect
+        size = (rect.width - 2 * self._border, rect.height - 2 * self._border)
+        if max_size:
+            size = (min(size[0], max_size[0]), min(size[1], max_size[1]))
+        res = sizing.new_size_keep_aspect_ratio(self.resolution, size)
+        return pygame.Rect(rect.centerx - res[0] // 2, rect.centery - res[1] // 2, res[0], res[1])
