@@ -218,6 +218,7 @@ class PygameWindow(BaseWindow):
             elif event.type == evts.EVT_BUTTON_SETTINGS:
                 if self._menu and self.is_menu_shown:
                     self._menu.back()
+                    return
                 elif self._menu:
                     self.toggle_menu()
                     return  # Avoid menu.update() else it we be closed again by K_ESCAPE in the events list
