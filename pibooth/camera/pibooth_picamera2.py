@@ -215,6 +215,7 @@ class Rpi_Picamera2(RpiCamera):
     def stop_preview(self):
         if self._cam._preview:
             # Use method implemented in the parent class
+            self._cam.stop_preview()
             super().stop_preview()
             LOGGER.info('Sopped preview')
             
@@ -235,7 +236,7 @@ class Rpi_Picamera2(RpiCamera):
         self._captures.append(stream)
         # Reconfigure and Stop camera before next preview
         self._cam.switch_mode(self._preview_config)
-        self._cam.stop()
+        
         AsyncTask(self.get_capture_image, event=evts.EVT_PIBOOTH_CAM_CAPTURE)
 
     def get_capture_image(self):
@@ -247,4 +248,5 @@ class Rpi_Picamera2(RpiCamera):
     def quit(self):
         """Close camera
         """
+        self._cam.stop()
         self._cam.close()
