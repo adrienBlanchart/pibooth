@@ -18,6 +18,7 @@ from pibooth.utils import LOGGER
 from pibooth.camera.rpi import RpiCamera
 from pibooth.language import get_translated_text
 from pibooth.tasks import AsyncTask
+from pibooth import evts
 
 
 # Release version
