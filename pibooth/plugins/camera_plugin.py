@@ -62,7 +62,7 @@ class CameraPlugin:
     def state_preview_enter(self, cfg, app, win):
         LOGGER.info("Show preview before next capture")
         border = 100
-        app.camera.preview(win.get_rect(absolute=True).inflate(-border, -border))
+        app.camera.preview(win)
         self.timer.start(cfg.getint('WINDOW', 'preview_delay'))
 
     @pibooth.hookimpl
