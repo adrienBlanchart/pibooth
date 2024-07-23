@@ -91,6 +91,10 @@ class CameraPlugin(object):
             app.camera.preview_countdown(cfg.getint('WINDOW', 'preview_delay'))
         else:
             app.camera.preview_wait(cfg.getint('WINDOW', 'preview_delay'))
+    
+    @pibooth.hookimpl
+    def state_preview_validate(self):
+        return 'capture'
 
     @pibooth.hookimpl
     def state_preview_exit(self, cfg, app):
