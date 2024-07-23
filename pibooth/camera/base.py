@@ -38,7 +38,7 @@ class BaseCamera:
         self._overlay_alpha = 60
         self._captures = []
         self._worker = None
-
+        
         self.resolution = None
         self.delete_internal_memory = False
         self.preview_rotation, self.capture_rotation = (0, 0)
