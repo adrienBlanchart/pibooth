@@ -17,6 +17,7 @@ from PIL import Image
 from pibooth.utils import LOGGER
 from pibooth.camera.rpi import RpiCamera
 from pibooth.language import get_translated_text
+from pibooth.tasks import AsyncTask
 
 
 # Release version
@@ -225,6 +226,12 @@ class Rpi_Picamera2(RpiCamera):
         # Reconfigure and Stop camera before next preview
         self._cam.switch_mode(self._preview_config)
         self._cam.stop()
+        AsyncTask(self.get_capture_image, event=evts.EVT_PIBOOTH_CAM_CAPTURE)
+
+    def get_capture_image(self):
+        """Return a new full resolution image.
+        """
+        return self._captures[-1]
        
 
     def quit(self):

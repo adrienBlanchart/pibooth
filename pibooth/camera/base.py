@@ -3,7 +3,7 @@
 import pygame
 from PIL import Image, ImageDraw
 
-from pibooth import fonts
+from pibooth import fonts, evts
 from pibooth.pictures import sizing
 
 
