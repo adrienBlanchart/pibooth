@@ -6,6 +6,7 @@ import pibooth
 from pibooth import camera
 from pibooth.utils import LOGGER
 from pibooth import evts
+import traceback
 
 
 class CameraPlugin(object):
@@ -81,6 +82,9 @@ class CameraPlugin(object):
 
     @pibooth.hookimpl
     def state_preview_do(self, cfg, app):
+        stack = traceback.format_stack()
+        # Loggez la pile d'appels
+        LOGGER.info("Call stack:\n%s", ''.join(stack))
         pygame.event.pump()  # Before blocking actions
         LOGGER.info("Show preview before next capture")
         if cfg.getboolean('WINDOW', 'preview_countdown'):
