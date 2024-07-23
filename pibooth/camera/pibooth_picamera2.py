@@ -161,6 +161,7 @@ class Rpi_Picamera2(RpiCamera):
         time_stamp = time.time() 
         
         while timeout > 0:
+            LOGGER.info(f'Countdown: {timeout}, time.time()-time_stamp > 1 {time.time()-time_stamp > 1} : {time.time()-time_stamp}')
             self._show_overlay(timeout, alpha)
             if time.time()-time_stamp > 1:
                 timeout -= 1
@@ -168,9 +169,11 @@ class Rpi_Picamera2(RpiCamera):
                 self._hide_overlay()
         # Keep smile for 1 second
         while time.time()-time_stamp < 1:
+            LOGGER.info(f'Smile: {time.time()-time_stamp}')
             self._show_overlay(get_translated_text('smile'), alpha)
         # Remove smile
         # _hide_overlay sets self._overlay = None otherwise app stalls after capture method is called
+        LOGGER.info('Hide overlay')
         self._hide_overlay()
 
     def preview_wait(self, timeout, alpha=60):
