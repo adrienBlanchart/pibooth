@@ -32,6 +32,7 @@ class BaseCamera:
 
     def __init__(self, camera_proxy):
         self._cam = camera_proxy
+        self._border = 50
         self._rect = None
         self._overlay = None
         self._overlay_text = None
