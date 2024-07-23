@@ -186,7 +186,7 @@ class BaseCamera:
         """Return a Rect object (as defined in pygame) for resizing preview and images
         in order to fit to the defined window.
         """
-        rect = self._rect.get_rect(absolute=True)
+        rect = self._rect
         size = (rect.width - 2 * self._border, rect.height - 2 * self._border)
         if max_size:
             size = (min(size[0], max_size[0]), min(size[1], max_size[1]))
