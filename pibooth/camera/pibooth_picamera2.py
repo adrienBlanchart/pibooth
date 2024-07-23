@@ -215,7 +215,7 @@ class Rpi_Picamera2(RpiCamera):
     def stop_preview(self):
         if self._cam._preview:
             # Use method implemented in the parent class
-            self._cam.stop_preview()
+            self._cam.stop()
             super().stop_preview()
             LOGGER.info('Sopped preview')
             
