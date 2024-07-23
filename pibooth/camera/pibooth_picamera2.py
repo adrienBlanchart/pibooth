@@ -190,7 +190,9 @@ class Rpi_Picamera2(RpiCamera):
 
     def update_preview(self):
         """Capture image and update screen with image"""
+        LOGGER.info('Updating preview')
         array = self._cam.capture_array('main')
+        LOGGER.info(f'Array shape: {array.shape}')
         rect = self.get_rect(self.MAX_RESOLUTION)
         # Resize high resolution image to fit smaller window
         res = cv2.resize(array, dsize=(rect.width,rect.height), 
@@ -203,7 +205,9 @@ class Rpi_Picamera2(RpiCamera):
         screen_rect = self._window.surface.get_rect()
         self._window.surface.blit(pg_image,
                                 pg_image.get_rect(center=screen_rect.center))
+        
         if self._overlay:
+            LOGGER.info("Blit overlay")
             self._window.surface.blit(self._overlay, self._overlay.get_rect(center=screen_rect.center))
         pygame.display.update() 
         LOGGER.info('Updated preview')
