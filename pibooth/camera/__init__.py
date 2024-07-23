@@ -36,6 +36,8 @@ def find_camera():
     rpi_cam_proxy = rpi_picamera2_proxy if rpi_picamera2_proxy else rpi_cam_proxy_1
     is_rpi2_proxy = True if rpi_picamera2_proxy else False
 
+    lib_cam_proxy = None
+    cv_cam_proxy = None
     #If both RpiCamera and RpiCamera2 are detected, close the one that is not used
     if rpi_cam_proxy:
         close_proxy(rpi_cam_proxy, None, None, None, not is_rpi2_proxy)
