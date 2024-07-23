@@ -15,6 +15,7 @@ from io import BytesIO
 from PIL import Image
 
 from pibooth.utils import LOGGER
+from pibooth.camera.rpi import RpiCamera
 from pibooth.language import get_translated_text
 
 
@@ -31,7 +32,7 @@ def get_rpi_picamera2_proxy():
     return None 
 
 
-class Rpi_Picamera2(Picamera2):
+class Rpi_Picamera2(RpiCamera):
 
     """Raspberry pi module v3 camera management
     """
