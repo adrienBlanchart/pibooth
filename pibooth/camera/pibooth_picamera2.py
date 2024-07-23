@@ -54,18 +54,22 @@ class Rpi_Picamera2(RpiCamera):
         super().__init__(camera_proxy)
         self._preview_config = None
         self._capture_config = None
+        LOGGER.info('Picamera2 initialized')
         
     def _specific_initialization(self):
         """Camera initialization.
         """
         resolution = self._transform()
         # Create preview configuration
+        LOGGER.info('Creating preview configuration')
             
         self._preview_config = self._cam.create_preview_configuration(main={'size':resolution}, 
                                 transform=Transform(hflip=self.preview_flip))
         
         self._capture_config = self._cam.create_still_configuration(main={'size':resolution},
                                 transform=Transform(hflip=self.capture_flip))
+        LOGGER.info('Preview and Capture configurations created')
+        
     
     def _show_overlay(self, text, alpha):
         """Add an image as an overlay
