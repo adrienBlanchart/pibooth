@@ -89,6 +89,7 @@ def load_pygame_image(filename):
         path = get_filename(filename)
 
     if osp.isfile(path):
+        LOGGER.debug("Loading image '%s'", path)
         return pygame.image.load(path).convert_alpha()
     raise ValueError(f"No such image file '{filename}'")
 

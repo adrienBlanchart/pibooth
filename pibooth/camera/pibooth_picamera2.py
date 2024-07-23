@@ -83,6 +83,7 @@ class Rpi_Picamera2(RpiCamera):
             image = self.build_overlay(size, str(text), alpha)
 
             # convert pil image to pygame.Surface
+            LOGGER.info("Showing overlay")
             self._overlay = pygame.image.frombuffer(image.tobytes(),size,'RGBA')
             LOGGER.info(f'Overlay: {self._overlay}')
             self.update_preview()
