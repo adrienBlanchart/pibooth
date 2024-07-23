@@ -181,3 +181,14 @@ class BaseCamera:
         """Specific camera cleanup.
         """
         pass
+
+    def get_rect(self, max_size=None):
+        """Return a Rect object (as defined in pygame) for resizing preview and images
+        in order to fit to the defined window.
+        """
+        rect = self._window.get_rect(absolute=True)
+        size = (rect.width - 2 * self._border, rect.height - 2 * self._border)
+        if max_size:
+            size = (min(size[0], max_size[0]), min(size[1], max_size[1]))
+        res = sizing.new_size_keep_aspect_ratio(self.resolution, size)
+        return pygame.Rect(rect.centerx - res[0] // 2, rect.centery - res[1] // 2, res[0], res[1])
