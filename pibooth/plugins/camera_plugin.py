@@ -94,6 +94,7 @@ class CameraPlugin(object):
 
     @pibooth.hookimpl
     def state_capture_do(self, events):
+        LOGGER.info("Capture done")
         event = evts.find_event(events, evts.EVT_PIBOOTH_CAM_CAPTURE)
         if event:
             self.count += 1
@@ -103,6 +104,9 @@ class CameraPlugin(object):
         if not cfg.getboolean('WINDOW', 'preview_stop_on_capture'):
             app.camera.stop_preview()
 
+
     @pibooth.hookimpl
     def state_processing_enter(self, app):
         self.count = 0
+        LOGGER.info("Stopping preview")
+        app.camera.stop_preview()
