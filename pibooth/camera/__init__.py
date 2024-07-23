@@ -31,10 +31,10 @@ def find_camera():
     The gPhoto2 camera is first (drivers most restrictive) to avoid connection
     concurence in case of DSLR compatible with OpenCV.
     """
-    rpi_cam_proxy_1 = get_rpi_camera_proxy()
-    rpi_picamera2_proxy = get_rpi_picamera2_proxy()
-    rpi_cam_proxy = rpi_picamera2_proxy if rpi_picamera2_proxy else rpi_cam_proxy_1
-    is_rpi2_proxy = True if rpi_picamera2_proxy else False
+    #rpi_cam_proxy_1 = get_rpi_camera_proxy()
+    #rpi_picamera2_proxy = get_rpi_picamera2_proxy()
+    rpi_cam_proxy = get_rpi_picamera2_proxy()#rpi_picamera2_proxy if rpi_picamera2_proxy else rpi_cam_proxy_1
+    is_rpi2_proxy = True #if rpi_picamera2_proxy else False
 
     lib_cam_proxy = None
     cv_cam_proxy = None
