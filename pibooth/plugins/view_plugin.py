@@ -147,6 +147,7 @@ class ViewPlugin:
     @pibooth.hookimpl
     def state_capture_validate(self, cfg, app, win):
         if self.capture_finished and (not cfg.getboolean('WINDOW', 'flash') or win.scene.count_flash >= 2):
+            LOGGER.info(f"Capture done ({self.capture_count}/{app.capture_nbr})")
             if self.capture_count >= app.capture_nbr:
                 return 'processing'
             if cfg.getint('WINDOW', 'preview_delay') > 0:
