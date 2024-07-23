@@ -134,6 +134,7 @@ class Rpi_Picamera2(RpiCamera):
         return super().get_rect(max_size) 
 
     def preview(self, window, flip=True):
+        LOGGER.info('Starting preview _ 1')
         if self._cam._preview:
             # Preview is still running
             return
@@ -162,6 +163,7 @@ class Rpi_Picamera2(RpiCamera):
         Uses the same implementation as the parent but changes preview to _preview
         because of the difference between picamera and picamera2.
         """
+        LOGGER.info('Starting preview countdown')
         timeout = int(timeout)
         if timeout < 1:
             raise ValueError('Start time shall be greater than 0')
