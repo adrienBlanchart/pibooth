@@ -122,7 +122,7 @@ class PicturePlugin:
         self.texts_vars['count'] = app.count
 
         LOGGER.info("Saving raw captures")
-        captures = app.camera.grab_captures()
+        captures = app.camera.get_captures()
         default_factory = get_picture_factory(captures, cfg.get('PICTURE', 'orientation'))
         factory = self._pm.hook.pibooth_setup_picture_factory(cfg=cfg,
                                                               opt_index=idx,

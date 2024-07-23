@@ -123,6 +123,7 @@ class BaseCamera(object):
         self.drop_captures()
         return images
 
+
     def drop_captures(self):
         """Delete all buffered captures.
         """
