@@ -190,6 +190,14 @@ class BaseSprite(pygame.sprite.DirtySprite):
             self.toggle_timer.reset()
             self.set_pressed(not self.pressed)
 
+class ClickEventSprite(BaseSprite):
+    
+    def __init__(self, *args, **kwargs):
+        kwargs['layer'] = kwargs.get('layer', BasePygameScene.LAYER_CLICKEVENTS)
+        super().__init__(*args, **kwargs)
+
+    def draw(self):
+        return None
 
 class OutlinesSprite(BaseSprite):
 
@@ -686,6 +694,7 @@ class BasePygameScene(BaseScene):
     LAYER_ARROWS = 6
     LAYER_STATUS = 8
     LAYER_OUTLINES = 10
+    LAYER_CLICKEVENTS = 11
 
     def __init__(self):
         self.sprites = pygame.sprite.LayeredDirty()
@@ -726,7 +735,8 @@ class BasePygameScene(BaseScene):
                            BasePygameScene.LAYER_TEXTS,
                            BasePygameScene.LAYER_PICTURE,
                            BasePygameScene.LAYER_ARROWS,
-                           BasePygameScene.LAYER_STATUS)
+                           BasePygameScene.LAYER_STATUS,
+                           BasePygameScene.LAYER_CLICKEVENTS)
         for sprite in reversed(self.sprites.get_sprites_at(pos)):
             if sprite.visible and sprite.layer in from_layers:
                 return sprite

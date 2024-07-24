@@ -5,7 +5,7 @@ from pygame_imslider import ImSlider, ImSliderRenderer, STYPE_LOOP
 from pibooth import evts
 from pibooth import pictures
 from pibooth.language import get_translated_text
-from pibooth.view.pygame.sprites import BasePygameScene, LeftArrowSprite, RightArrowSprite, TextSprite
+from pibooth.view.pygame.sprites import BasePygameScene, LeftArrowSprite, RightArrowSprite, TextSprite, ClickEventSprite
 
 
 class Renderer(ImSliderRenderer):
@@ -61,6 +61,12 @@ class ChooseScene(BasePygameScene):
         self.left_arrow.on_pressed = lambda: evts.post(evts.EVT_PIBOOTH_CAPTURE)
         self.right_arrow.on_pressed = lambda: evts.post(evts.EVT_PIBOOTH_PRINT)
 
+        #Add a ClickEventSprite to handle the touch event instead of selection arrow ( left arrow )
+        self.click_event = ClickEventSprite(self)
+        self.click_event.set_rect(0, 0, 200, 100)
+        self.click_event.on_pressed = lambda: evts.post(evts.EVT_PIBOOTH_CAPTURE)
+
+
     def resize(self, size):
         # Slider
         slider_width, slider_height = self.rect.width * 3 // 4, self.rect.height * 6 // 8
@@ -71,6 +77,9 @@ class ChooseScene(BasePygameScene):
             self.slider.set_arrows_visible(True)
         self.slider.set_position(x, y)
         self.slider.set_size(slider_width, slider_height)
+
+        #ClickEventSprite
+        self.click_event.set_rect(x, y, slider_width, slider_height)
 
         # Text
         self.text.set_text(get_translated_text('choose'))  # In case of text has changed
@@ -104,6 +113,7 @@ class ChooseScene(BasePygameScene):
             else:
                 y = self.rect.bottom - size[1] - 10
             self.right_arrow.set_rect(x, y, size[0], size[1])
+
 
     def update(self, events):
         super().update(events)
