@@ -154,6 +154,7 @@ class Rpi_Picamera2(RpiCamera):
             else:
                 self._preview_config['transform'] = Transform(hflip=flip)
 
+        LOGGER.info('preview config: %s', self._preview_config)
         self._cam.configure(self._preview_config)
         self._cam.start()
         self.update_preview()
