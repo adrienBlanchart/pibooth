@@ -26,7 +26,7 @@ class BaseSprite(pygame.sprite.DirtySprite):
     For instance, the outlines are sub-sprites.
     """
 
-    def __init__(self, parent=None, size=(10, 10), outlines=True, layer=None):
+    def __init__(self, parent=None, size=(10, 10), outlines=True, layer=None, doRender=True):
         """
         :param parent: sprite on which outlines are drawn
         :type parent: object
@@ -48,10 +48,11 @@ class BaseSprite(pygame.sprite.DirtySprite):
         self.on_pressed = None
         self.toggle_timer = PollingTimer(start=False)
         self.layer = layer
-        if self.parent:
-            self.parent.add_sprite(self)
-        if outlines:
-            self.add_sprite(OutlinesSprite(self))
+        if doRender:
+            if self.parent:
+                self.parent.add_sprite(self)
+            if outlines:
+                self.add_sprite(OutlinesSprite(self))
 
     def get_sprites(self, include_outlines=True, recursive=False):
         """Return all sub-sprites.
@@ -194,6 +195,7 @@ class ClickEventSprite(BaseSprite):
     
     def __init__(self, *args, **kwargs):
         kwargs['layer'] = kwargs.get('layer', BasePygameScene.LAYER_CLICKEVENTS)
+        kwargs['doRender'] = False
         super().__init__(*args, **kwargs)
 
     def draw(self):
